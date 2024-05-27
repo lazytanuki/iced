@@ -40,3 +40,4 @@ ouroboros.optional = true
 
 qrcode.workspace = true
 qrcode.optional = true
+lilt = "0.4.2"
