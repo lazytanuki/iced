@@ -558,6 +558,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
+        _theme: &Theme,
     ) -> event::Status {
         let update_cache = |state, value| {
             replace_paragraph(

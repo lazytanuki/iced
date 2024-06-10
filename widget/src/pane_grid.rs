@@ -347,6 +347,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) -> event::Status {
         let mut event_status = event::Status::Ignored;
 
@@ -537,6 +538,7 @@ where
                     shell,
                     viewport,
                     is_picked,
+                    theme,
                 )
             })
             .fold(event_status, event::Status::merge)

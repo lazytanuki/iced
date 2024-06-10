@@ -166,6 +166,7 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
+        theme: &Theme,
     ) -> event::Status {
         fn recurse<Message, Theme, Renderer>(
             element: &mut overlay::Element<'_, Message, Theme, Renderer>,
@@ -175,6 +176,7 @@ where
             renderer: &Renderer,
             clipboard: &mut dyn Clipboard,
             shell: &mut Shell<'_, Message>,
+            theme: &Theme,
         ) -> (event::Status, bool)
         where
             Renderer: renderer::Renderer,
@@ -194,6 +196,7 @@ where
                             renderer,
                             clipboard,
                             shell,
+                            theme,
                         )
                     } else {
                         (event::Status::Ignored, false)
@@ -224,6 +227,7 @@ where
                             renderer,
                             clipboard,
                             shell,
+                            theme,
                         ),
                         is_over,
                     )
@@ -243,6 +247,7 @@ where
             renderer,
             clipboard,
             shell,
+            theme,
         );
 
         status

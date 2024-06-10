@@ -292,6 +292,7 @@ where
             clipboard: &mut dyn core::Clipboard,
             shell: &mut Shell<'_, Message>,
             viewport: &Rectangle,
+            theme: &Theme,
         ) -> event::Status {
             let is_mouse_press = matches!(
                 event,
@@ -301,7 +302,7 @@ where
             if let core::event::Status::Captured =
                 self.content.as_widget_mut().on_event(
                     state, event, layout, cursor, renderer, clipboard, shell,
-                    viewport,
+                    viewport, theme,
                 )
             {
                 return event::Status::Captured;
@@ -498,6 +499,7 @@ where
             clipboard: &mut dyn core::Clipboard,
             shell: &mut Shell<'_, Message>,
             viewport: &Rectangle,
+            theme: &Theme,
         ) -> event::Status {
             let mut children = layout.children().zip(&mut tree.children);
             let (base_layout, base_tree) = children.next().unwrap();
@@ -521,6 +523,7 @@ where
                     clipboard,
                     shell,
                     viewport,
+                    theme,
                 )
             } else {
                 event::Status::Ignored
@@ -539,6 +542,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             )
         }
 

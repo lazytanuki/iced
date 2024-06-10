@@ -767,6 +767,7 @@ async fn run_instance<P, C>(
                             &mut window.renderer,
                             &mut clipboard,
                             &mut messages,
+                            window.state.theme(),
                         );
 
                         debug.draw_started();
@@ -990,6 +991,7 @@ async fn run_instance<P, C>(
                                     &mut window.renderer,
                                     &mut clipboard,
                                     &mut messages,
+                                    window.state.theme(),
                                 );
 
                             window.raw.request_redraw();

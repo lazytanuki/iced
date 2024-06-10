@@ -65,6 +65,7 @@ where
         _renderer: &Renderer,
         _clipboard: &mut dyn Clipboard,
         _shell: &mut Shell<'_, Message>,
+        _theme: &Theme,
     ) -> event::Status {
         event::Status::Ignored
     }

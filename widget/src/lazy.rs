@@ -204,6 +204,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) -> event::Status {
         self.with_element_mut(|element| {
             element.as_widget_mut().on_event(
@@ -215,6 +216,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             )
         })
     }
@@ -382,9 +384,12 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
+        theme: &Theme,
     ) -> event::Status {
         self.with_overlay_mut_maybe(|overlay| {
-            overlay.on_event(event, layout, cursor, renderer, clipboard, shell)
+            overlay.on_event(
+                event, layout, cursor, renderer, clipboard, shell, theme,
+            )
         })
         .unwrap_or(event::Status::Ignored)
     }

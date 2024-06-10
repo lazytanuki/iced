@@ -284,6 +284,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) -> event::Status {
         self.content.as_widget_mut().on_event(
             tree,
@@ -294,6 +295,7 @@ where
             clipboard,
             shell,
             viewport,
+            theme,
         )
     }
 

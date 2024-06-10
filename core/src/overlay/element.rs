@@ -58,9 +58,10 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
+        theme: &Theme,
     ) -> event::Status {
         self.overlay
-            .on_event(event, layout, cursor, renderer, clipboard, shell)
+            .on_event(event, layout, cursor, renderer, clipboard, shell, theme)
     }
 
     /// Returns the current [`mouse::Interaction`] of the [`Element`].
@@ -157,6 +158,7 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, B>,
+        theme: &Theme,
     ) -> event::Status {
         let mut local_messages = Vec::new();
         let mut local_shell = Shell::new(&mut local_messages);
@@ -168,6 +170,7 @@ where
             renderer,
             clipboard,
             &mut local_shell,
+            theme,
         );
 
         shell.merge(local_shell, self.mapper);

@@ -117,6 +117,7 @@ where
                     renderer,
                     clipboard,
                     &mut messages,
+                    theme,
                 );
 
                 uncaptured_events.extend(

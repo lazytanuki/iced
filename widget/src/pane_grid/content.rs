@@ -250,6 +250,7 @@ where
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
         is_picked: bool,
+        theme: &Theme,
     ) -> event::Status {
         let mut event_status = event::Status::Ignored;
 
@@ -265,6 +266,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             );
 
             children.next().unwrap()
@@ -284,6 +286,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             )
         };
 

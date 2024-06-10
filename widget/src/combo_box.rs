@@ -383,6 +383,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) -> event::Status {
         let menu = tree.state.downcast_mut::<Menu<T>>();
 
@@ -411,6 +412,7 @@ where
             clipboard,
             &mut local_shell,
             viewport,
+            theme,
         );
 
         // Then finally react to them here
@@ -599,6 +601,7 @@ where
                     clipboard,
                     &mut Shell::new(&mut vec![]),
                     viewport,
+                    theme,
                 );
             }
         });

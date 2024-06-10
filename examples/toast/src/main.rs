@@ -369,6 +369,7 @@ mod toast {
             clipboard: &mut dyn Clipboard,
             shell: &mut Shell<'_, Message>,
             viewport: &Rectangle,
+            theme: &Theme,
         ) -> event::Status {
             self.content.as_widget_mut().on_event(
                 &mut state.children[0],
@@ -379,6 +380,7 @@ mod toast {
                 clipboard,
                 shell,
                 viewport,
+                theme,
             )
         }
 
@@ -498,6 +500,7 @@ mod toast {
             renderer: &Renderer,
             clipboard: &mut dyn Clipboard,
             shell: &mut Shell<'_, Message>,
+            theme: &Theme,
         ) -> event::Status {
             if let Event::Window(window::Event::RedrawRequested(now)) = &event {
                 let mut next_redraw: Option<window::RedrawRequest> = None;
@@ -550,6 +553,7 @@ mod toast {
                         clipboard,
                         &mut local_shell,
                         &viewport,
+                        theme,
                     );
 
                     if !local_shell.is_empty() {

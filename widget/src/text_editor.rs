@@ -432,6 +432,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
+        _theme: &Theme,
     ) -> event::Status {
         let Some(on_edit) = self.on_edit.as_ref() else {
             return event::Status::Ignored;

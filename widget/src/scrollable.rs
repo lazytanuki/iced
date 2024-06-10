@@ -336,6 +336,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
+        theme: &Theme,
     ) -> event::Status {
         let state = tree.state.downcast_mut::<State>();
         let bounds = layout.bounds();
@@ -525,6 +526,7 @@ where
                     x: bounds.x + translation.x,
                     ..bounds
                 },
+                theme,
             )
         };
 

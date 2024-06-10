@@ -81,6 +81,7 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
+        theme: &Theme,
     ) -> event::Status {
         self.children
             .iter_mut()
@@ -93,6 +94,7 @@ where
                     renderer,
                     clipboard,
                     shell,
+                    theme,
                 )
             })
             .fold(event::Status::Ignored, event::Status::merge)

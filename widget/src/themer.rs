@@ -121,9 +121,12 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) -> event::Status {
+        let theme = &(self.to_theme)(theme);
         self.content.as_widget_mut().on_event(
             tree, event, layout, cursor, renderer, clipboard, shell, viewport,
+            theme,
         )
     }
 
@@ -227,9 +230,12 @@ where
                 renderer: &Renderer,
                 clipboard: &mut dyn Clipboard,
                 shell: &mut Shell<'_, Message>,
+                theme: &Theme,
             ) -> event::Status {
-                self.content
-                    .on_event(event, layout, cursor, renderer, clipboard, shell)
+                let theme = (self.to_theme)(theme);
+                self.content.on_event(
+                    event, layout, cursor, renderer, clipboard, shell, &theme,
+                )
             }
 
             fn operate(
