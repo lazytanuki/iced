@@ -360,14 +360,10 @@ where
                             return event::Status::Ignored;
                         };
 
-                        state.scroll_y_to(
-                            scrollbar.scroll_percentage_y(
-                                scroller_grabbed_at,
-                                cursor_position,
-                            ),
-                            bounds,
-                            content_bounds,
-                        );
+                        state.scroll_y_to(scrollbar.scroll_percentage_y(
+                            scroller_grabbed_at,
+                            cursor_position,
+                        ));
 
                         let _ = notify_on_scroll(
                             state,
@@ -396,14 +392,10 @@ where
                         scrollbars.grab_y_scroller(cursor_position),
                         scrollbars.y,
                     ) {
-                        state.scroll_y_to(
-                            scrollbar.scroll_percentage_y(
-                                scroller_grabbed_at,
-                                cursor_position,
-                            ),
-                            bounds,
-                            content_bounds,
-                        );
+                        state.scroll_y_to(scrollbar.scroll_percentage_y(
+                            scroller_grabbed_at,
+                            cursor_position,
+                        ));
 
                         state.y_scroller_grabbed_at = Some(scroller_grabbed_at);
 
@@ -431,14 +423,10 @@ where
                     };
 
                     if let Some(scrollbar) = scrollbars.x {
-                        state.scroll_x_to(
-                            scrollbar.scroll_percentage_x(
-                                scroller_grabbed_at,
-                                cursor_position,
-                            ),
-                            bounds,
-                            content_bounds,
-                        );
+                        state.scroll_x_to(scrollbar.scroll_percentage_x(
+                            scroller_grabbed_at,
+                            cursor_position,
+                        ));
 
                         let _ = notify_on_scroll(
                             state,
@@ -467,14 +455,10 @@ where
                         scrollbars.grab_x_scroller(cursor_position),
                         scrollbars.x,
                     ) {
-                        state.scroll_x_to(
-                            scrollbar.scroll_percentage_x(
-                                scroller_grabbed_at,
-                                cursor_position,
-                            ),
-                            bounds,
-                            content_bounds,
-                        );
+                        state.scroll_x_to(scrollbar.scroll_percentage_x(
+                            scroller_grabbed_at,
+                            cursor_position,
+                        ));
 
                         state.x_scroller_grabbed_at = Some(scroller_grabbed_at);
 
@@ -982,8 +966,8 @@ fn notify_on_scroll<Message>(
     }
 
     let viewport = Viewport {
-        offset_x: state.offset_x,
-        offset_y: state.offset_y,
+        offset_x: Offset::Relative(state.offset_x_relative),
+        offset_y: Offset::Relative(state.offset_y_relative),
         bounds,
         content_bounds,
     };
@@ -1020,9 +1004,9 @@ fn notify_on_scroll<Message>(
 #[derive(Debug, Clone, Copy)]
 struct State {
     scroll_area_touched_at: Option<Point>,
-    offset_y: Offset,
+    offset_y_relative: f32,
     y_scroller_grabbed_at: Option<f32>,
-    offset_x: Offset,
+    offset_x_relative: f32,
     x_scroller_grabbed_at: Option<f32>,
     keyboard_modifiers: keyboard::Modifiers,
     last_notified: Option<Viewport>,
@@ -1032,9 +1016,9 @@ impl Default for State {
     fn default() -> Self {
         Self {
             scroll_area_touched_at: None,
-            offset_y: Offset::Absolute(0.0),
+            offset_y_relative: 0.0,
             y_scroller_grabbed_at: None,
-            offset_x: Offset::Absolute(0.0),
+            offset_x_relative: 0.0,
             x_scroller_grabbed_at: None,
             keyboard_modifiers: keyboard::Modifiers::default(),
             last_notified: None,
@@ -1067,6 +1051,13 @@ impl Offset {
             Offset::Relative(percentage) => {
                 ((content - viewport) * percentage).max(0.0)
             }
+        }
+    }
+
+    fn relative(self, viewport: f32, content: f32) -> f32 {
+        match self {
+            Offset::Absolute(absolute) => absolute / (content - viewport),
+            Offset::Relative(percentage) => percentage.max(0.0),
         }
     }
 
@@ -1178,19 +1169,21 @@ impl State {
         );
 
         if bounds.height < content_bounds.height {
-            self.offset_y = Offset::Absolute(
-                (self.offset_y.absolute(bounds.height, content_bounds.height)
+            self.offset_y_relative =
+                ((Offset::Relative(self.offset_y_relative)
+                    .absolute(bounds.height, content_bounds.height)
                     - delta.y)
-                    .clamp(0.0, content_bounds.height - bounds.height),
-            );
+                    .clamp(0.0, content_bounds.height - bounds.height))
+                    / (content_bounds.height - bounds.height);
         }
 
         if bounds.width < content_bounds.width {
-            self.offset_x = Offset::Absolute(
-                (self.offset_x.absolute(bounds.width, content_bounds.width)
+            self.offset_x_relative =
+                ((Offset::Relative(self.offset_x_relative)
+                    .absolute(bounds.width, content_bounds.width)
                     - delta.x)
-                    .clamp(0.0, content_bounds.width - bounds.width),
-            );
+                    .clamp(0.0, content_bounds.width - bounds.width))
+                    / (content_bounds.width - bounds.width);
         }
     }
 
@@ -1198,51 +1191,36 @@ impl State {
     ///
     /// `0` represents scrollbar at the beginning, while `1` represents scrollbar at
     /// the end.
-    pub fn scroll_y_to(
-        &mut self,
-        percentage: f32,
-        bounds: Rectangle,
-        content_bounds: Rectangle,
-    ) {
-        self.offset_y = Offset::Relative(percentage.clamp(0.0, 1.0));
-        self.unsnap(bounds, content_bounds);
+    pub fn scroll_y_to(&mut self, percentage: f32) {
+        self.offset_y_relative = percentage.clamp(0.0, 1.0);
     }
 
     /// Scrolls the [`Scrollable`] to a relative amount along the x axis.
     ///
     /// `0` represents scrollbar at the beginning, while `1` represents scrollbar at
     /// the end.
-    pub fn scroll_x_to(
-        &mut self,
-        percentage: f32,
-        bounds: Rectangle,
-        content_bounds: Rectangle,
-    ) {
-        self.offset_x = Offset::Relative(percentage.clamp(0.0, 1.0));
-        self.unsnap(bounds, content_bounds);
+    pub fn scroll_x_to(&mut self, percentage: f32) {
+        self.offset_x_relative = percentage.clamp(0.0, 1.0);
     }
 
     /// Snaps the scroll position to a [`RelativeOffset`].
     pub fn snap_to(&mut self, offset: RelativeOffset) {
-        self.offset_x = Offset::Relative(offset.x.clamp(0.0, 1.0));
-        self.offset_y = Offset::Relative(offset.y.clamp(0.0, 1.0));
+        self.offset_x_relative = offset.x.clamp(0.0, 1.0);
+        self.offset_y_relative = offset.y.clamp(0.0, 1.0);
     }
 
     /// Scroll to the provided [`AbsoluteOffset`].
     pub fn scroll_to(&mut self, offset: AbsoluteOffset) {
-        self.offset_x = Offset::Absolute(offset.x.max(0.0));
-        self.offset_y = Offset::Absolute(offset.y.max(0.0));
-    }
-
-    /// Unsnaps the current scroll position, if snapped, given the bounds of the
-    /// [`Scrollable`] and its contents.
-    pub fn unsnap(&mut self, bounds: Rectangle, content_bounds: Rectangle) {
-        self.offset_x = Offset::Absolute(
-            self.offset_x.absolute(bounds.width, content_bounds.width),
-        );
-        self.offset_y = Offset::Absolute(
-            self.offset_y.absolute(bounds.height, content_bounds.height),
-        );
+        // TODO: do we have cases where `self.last_notified` is `None`?
+        if let Some(viewport) = self.last_notified {
+            self.offset_x_relative = Offset::Absolute(offset.x.max(0.0))
+                .relative(viewport.bounds.width, viewport.content_bounds.width);
+            self.offset_y_relative = Offset::Absolute(offset.y.max(0.0))
+                .relative(
+                    viewport.bounds.height,
+                    viewport.content_bounds.height,
+                );
+        }
     }
 
     /// Returns the scrolling translation of the [`State`], given a [`Direction`],
@@ -1255,7 +1233,7 @@ impl State {
     ) -> Vector {
         Vector::new(
             if let Some(horizontal) = direction.horizontal() {
-                self.offset_x.translation(
+                Offset::Relative(self.offset_x_relative).translation(
                     bounds.width,
                     content_bounds.width,
                     horizontal.alignment,
@@ -1264,7 +1242,7 @@ impl State {
                 0.0
             },
             if let Some(vertical) = direction.vertical() {
-                self.offset_y.translation(
+                Offset::Relative(self.offset_y_relative).translation(
                     bounds.height,
                     content_bounds.height,
                     vertical.alignment,
