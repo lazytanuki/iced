@@ -30,6 +30,7 @@
 //!     }
 //! }
 //! ```
+use crate::core::Animation;
 use crate::core::alignment;
 use crate::core::animation::Easing;
 use crate::core::layout;
@@ -42,7 +43,6 @@ use crate::core::touch;
 use crate::core::widget;
 use crate::core::widget::tree::{self, Tree};
 use crate::core::window;
-use crate::core::Animation;
 use crate::core::{
     Border, Clipboard, Color, Element, Event, Layout, Length, Pixels,
     Rectangle, Shell, Size, Theme, Widget,
