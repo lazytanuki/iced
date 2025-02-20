@@ -102,7 +102,7 @@ pub struct Toggler<
     text_wrapping: text::Wrapping,
     spacing: f32,
     font: Option<Renderer::Font>,
-    class: Theme::Class<'a>,
+    class: Theme::StyleClass<'a>,
     last_status: Option<Status>,
 }
 
@@ -158,7 +158,7 @@ where
             text_wrapping: text::Wrapping::default(),
             spacing: Self::DEFAULT_SIZE / 2.0,
             font: None,
-            class: Theme::default(),
+            class: Theme::default_style(),
             last_status: None,
         }
     }
@@ -259,7 +259,7 @@ where
     #[must_use]
     pub fn style(mut self, style: impl Fn(&Theme, Status) -> Style + 'a) -> Self
     where
-        Theme::Class<'a>: From<StyleFn<'a, Theme>>,
+        Theme::StyleClass<'a>: From<StyleFn<'a, Theme>>,
     {
         self.class = (Box::new(style) as StyleFn<'a, Theme>).into();
         self
@@ -268,7 +268,7 @@ where
     /// Sets the style class of the [`Toggler`].
     #[cfg(feature = "advanced")]
     #[must_use]
-    pub fn class(mut self, class: impl Into<Theme::Class<'a>>) -> Self {
+    pub fn class(mut self, class: impl Into<Theme::StyleClass<'a>>) -> Self {
         self.class = class.into();
         self
     }
@@ -575,14 +575,14 @@ pub struct Style {
 
 /// The theme catalog of a [`Toggler`].
 pub trait Catalog: Sized {
-    /// The item class of the [`Catalog`].
-    type Class<'a>;
+    /// The item style class of the [`Catalog`].
+    type StyleClass<'a>;
 
-    /// The default class produced by the [`Catalog`].
-    fn default<'a>() -> Self::Class<'a>;
+    /// The default style class produced by the [`Catalog`].
+    fn default_style<'a>() -> Self::StyleClass<'a>;
 
     /// The [`Style`] of a class with the given status.
-    fn style(&self, class: &Self::Class<'_>, status: Status) -> Style;
+    fn style(&self, class: &Self::StyleClass<'_>, status: Status) -> Style;
 }
 
 /// A styling function for a [`Toggler`].
@@ -591,19 +591,19 @@ pub trait Catalog: Sized {
 pub type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, Status) -> Style + 'a>;
 
 impl Catalog for Theme {
-    type Class<'a> = StyleFn<'a, Self>;
+    type StyleClass<'a> = StyleFn<'a, Self>;
 
-    fn default<'a>() -> Self::Class<'a> {
-        Box::new(default)
+    fn default_style<'a>() -> Self::StyleClass<'a> {
+        Box::new(default_style)
     }
 
-    fn style(&self, class: &Self::Class<'_>, status: Status) -> Style {
+    fn style(&self, class: &Self::StyleClass<'_>, status: Status) -> Style {
         class(self, status)
     }
 }
 
 /// The default style of a [`Toggler`].
-pub fn default(theme: &Theme, status: Status) -> Style {
+pub fn default_style(theme: &Theme, status: Status) -> Style {
     let palette = theme.extended_palette();
 
     let background = match status {
