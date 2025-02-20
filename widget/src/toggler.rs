@@ -38,7 +38,7 @@ use crate::core::mouse;
 use crate::core::renderer;
 use crate::core::text;
 use crate::core::theme::palette::mix;
-use crate::core::time::Instant;
+use crate::core::time::{Duration, Instant};
 use crate::core::touch;
 use crate::core::widget;
 use crate::core::widget::tree::{self, Tree};
@@ -573,16 +573,42 @@ pub struct Style {
     pub foreground_bounds_horizontal_progress: f32,
 }
 
+/// The animation parameters of a toggler.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AnimationParams {
+    /// Sets the [`Easing`] function of the [`Animation`].
+    ///
+    /// See the [Easing Functions Cheat Sheet](https://easings.net) for
+    /// details!
+    pub easing: Easing,
+    /// Duration of the animation.
+    ///
+    /// A duration of zero disables the animation effect.
+    pub duration: Duration,
+}
+
 /// The theme catalog of a [`Toggler`].
 pub trait Catalog: Sized {
     /// The item style class of the [`Catalog`].
     type StyleClass<'a>;
 
+    /// The item animation class of the [`Catalog`].
+    type AnimationClass<'a>;
+
     /// The default style class produced by the [`Catalog`].
     fn default_style<'a>() -> Self::StyleClass<'a>;
 
+    /// The default animation class produced by the [`Catalog`].
+    fn default_animation<'a>() -> Self::AnimationClass<'a>;
+
     /// The [`Style`] of a class with the given status.
     fn style(&self, class: &Self::StyleClass<'_>, status: Status) -> Style;
+
+    /// The [`AnimationParams`] of a class.
+    fn animation_params(
+        &self,
+        class: &Self::AnimationClass<'_>,
+    ) -> AnimationParams;
 }
 
 /// A styling function for a [`Toggler`].
@@ -590,8 +616,14 @@ pub trait Catalog: Sized {
 /// This is just a boxed closure: `Fn(&Theme, Status) -> Style`.
 pub type StyleFn<'a, Theme> = Box<dyn Fn(&Theme, Status) -> Style + 'a>;
 
+/// A animation parameters generator function for a [`Toggler`].
+///
+/// This is just a boxed closure: `Fn(&Theme) -> AnimationParams`.
+pub type AnimParamsFn<'a, Theme> = Box<dyn Fn(&Theme) -> AnimationParams>;
+
 impl Catalog for Theme {
     type StyleClass<'a> = StyleFn<'a, Self>;
+    type AnimationClass<'a> = AnimParamsFn<'a, Self>;
 
     fn default_style<'a>() -> Self::StyleClass<'a> {
         Box::new(default_style)
@@ -599,6 +631,17 @@ impl Catalog for Theme {
 
     fn style(&self, class: &Self::StyleClass<'_>, status: Status) -> Style {
         class(self, status)
+    }
+
+    fn default_animation<'a>() -> Self::AnimationClass<'a> {
+        Box::new(default_animation_params)
+    }
+
+    fn animation_params(
+        &self,
+        class: &Self::AnimationClass<'_>,
+    ) -> AnimationParams {
+        class(self)
     }
 }
 
@@ -679,5 +722,13 @@ pub fn default_style(theme: &Theme, status: Status) -> Style {
         background_border_width: 0.0,
         background_border_color: Color::TRANSPARENT,
         foreground_bounds_horizontal_progress,
+    }
+}
+
+/// The default animation parameters of a [`Toggler`].
+pub fn default_animation_params(_theme: &Theme) -> AnimationParams {
+    AnimationParams {
+        easing: Easing::EaseOut,
+        duration: Duration::from_millis(300),
     }
 }
