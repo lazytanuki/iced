@@ -307,6 +307,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         for ((child, state), layout) in self
             .children
@@ -316,7 +317,7 @@ where
         {
             child.as_widget_mut().update(
                 state, event, layout, cursor, renderer, clipboard, shell,
-                viewport,
+                viewport, theme,
             );
         }
     }

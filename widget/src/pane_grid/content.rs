@@ -250,6 +250,7 @@ where
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
         is_picked: bool,
+        theme: &Theme,
     ) {
         let body_layout = if let Some(title_bar) = &mut self.title_bar {
             let mut children = layout.children();
@@ -263,6 +264,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             );
 
             children.next().unwrap()
@@ -280,6 +282,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             );
         }
     }

@@ -48,7 +48,7 @@ mod tests {
     #[test]
     fn it_counts() -> Result<(), Error> {
         let mut counter = Counter { value: 0 };
-        let mut ui = simulator(counter.view());
+        let mut ui = simulator(counter.view(), &iced::Theme::Light);
 
         let _ = ui.click(text("Increment"))?;
         let _ = ui.click(text("Increment"))?;
@@ -60,7 +60,7 @@ mod tests {
 
         assert_eq!(counter.value, 1);
 
-        let mut ui = simulator(counter.view());
+        let mut ui = simulator(counter.view(), &iced::Theme::Light);
         assert!(ui.find(text("1")).is_ok(), "Counter should display 1!");
 
         Ok(())

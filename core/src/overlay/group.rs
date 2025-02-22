@@ -80,9 +80,12 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
+        theme: &Theme,
     ) {
         for (child, layout) in self.children.iter_mut().zip(layout.children()) {
-            child.update(event, layout, cursor, renderer, clipboard, shell);
+            child.update(
+                event, layout, cursor, renderer, clipboard, shell, theme,
+            );
         }
     }
 

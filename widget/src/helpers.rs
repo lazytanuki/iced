@@ -641,6 +641,7 @@ where
             clipboard: &mut dyn core::Clipboard,
             shell: &mut Shell<'_, Message>,
             viewport: &Rectangle,
+            theme: &Theme,
         ) {
             let is_mouse_press = matches!(
                 event,
@@ -649,7 +650,7 @@ where
 
             self.content.as_widget_mut().update(
                 state, event, layout, cursor, renderer, clipboard, shell,
-                viewport,
+                viewport, theme,
             );
 
             if is_mouse_press && cursor.is_over(layout.bounds()) {
@@ -844,6 +845,7 @@ where
             clipboard: &mut dyn core::Clipboard,
             shell: &mut Shell<'_, Message>,
             viewport: &Rectangle,
+            theme: &Theme,
         ) {
             let mut children = layout.children().zip(&mut tree.children);
             let (base_layout, base_tree) = children.next().unwrap();
@@ -887,7 +889,7 @@ where
 
                 self.top.as_widget_mut().update(
                     top_tree, event, top_layout, cursor, renderer, clipboard,
-                    shell, viewport,
+                    shell, viewport, theme,
                 );
 
                 // Ignore redraw requests of invisible content
@@ -909,6 +911,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             );
         }
 

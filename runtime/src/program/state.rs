@@ -113,6 +113,7 @@ where
             renderer,
             clipboard,
             &mut messages,
+            theme,
         );
 
         let uncaptured_events = self

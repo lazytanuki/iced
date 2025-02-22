@@ -214,6 +214,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         let is_over = cursor.is_over(layout.bounds());
         let end = self.children.len() - 1;
@@ -228,7 +229,7 @@ where
         {
             child.as_widget_mut().update(
                 state, event, layout, cursor, renderer, clipboard, shell,
-                viewport,
+                viewport, theme,
             );
 
             if shell.is_event_captured() {

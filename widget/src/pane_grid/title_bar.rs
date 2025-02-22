@@ -437,6 +437,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         let mut children = layout.children();
         let padded = children.next().unwrap();
@@ -463,6 +464,7 @@ where
                         clipboard,
                         shell,
                         viewport,
+                        theme,
                     );
                 } else {
                     show_title = false;
@@ -476,6 +478,7 @@ where
                         clipboard,
                         shell,
                         viewport,
+                        theme,
                     );
                 }
             } else {
@@ -488,6 +491,7 @@ where
                     clipboard,
                     shell,
                     viewport,
+                    theme,
                 );
             }
         }
@@ -502,6 +506,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             );
         }
     }

@@ -519,6 +519,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         let menu = tree.state.downcast_mut::<Menu<T>>();
 
@@ -547,6 +548,7 @@ where
             clipboard,
             &mut local_shell,
             viewport,
+            theme,
         );
 
         if local_shell.is_event_captured() {
@@ -746,6 +748,7 @@ where
                     clipboard,
                     &mut local_shell,
                     viewport,
+                    theme,
                 );
                 shell.request_input_method(local_shell.input_method());
             }

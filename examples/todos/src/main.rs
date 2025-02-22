@@ -601,6 +601,7 @@ mod tests {
                 ..Settings::default()
             },
             todos.view(),
+            &Theme::Dark,
         )
     }
 
@@ -622,7 +623,7 @@ mod tests {
         let mut ui = simulator(&todos);
         let _ = ui.find(text("Create the universe"))?;
 
-        let snapshot = ui.snapshot(&Theme::Dark)?;
+        let snapshot = ui.snapshot()?;
         assert!(
             snapshot.matches_hash("snapshots/creates_a_new_task")?,
             "snapshots should match!"

@@ -368,6 +368,7 @@ mod toast {
             clipboard: &mut dyn Clipboard,
             shell: &mut Shell<'_, Message>,
             viewport: &Rectangle,
+            theme: &Theme,
         ) {
             self.content.as_widget_mut().update(
                 &mut state.children[0],
@@ -378,6 +379,7 @@ mod toast {
                 clipboard,
                 shell,
                 viewport,
+                theme,
             );
         }
 
@@ -497,6 +499,7 @@ mod toast {
             renderer: &Renderer,
             clipboard: &mut dyn Clipboard,
             shell: &mut Shell<'_, Message>,
+            theme: &Theme,
         ) {
             if let Event::Window(window::Event::RedrawRequested(now)) = &event {
                 self.instants.iter_mut().enumerate().for_each(
@@ -537,6 +540,7 @@ mod toast {
                     clipboard,
                     &mut local_shell,
                     &viewport,
+                    theme,
                 );
 
                 if !local_shell.is_empty() {

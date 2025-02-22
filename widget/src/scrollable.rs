@@ -524,6 +524,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
+        theme: &Theme,
     ) {
         let state = tree.state.downcast_mut::<State>();
         let bounds = layout.bounds();
@@ -747,6 +748,7 @@ where
                         x: bounds.x + translation.x,
                         ..bounds
                     },
+                    theme,
                 );
 
                 if !had_input_method {

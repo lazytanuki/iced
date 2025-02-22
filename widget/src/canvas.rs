@@ -225,6 +225,7 @@ where
         _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        _theme: &Theme,
     ) {
         let bounds = layout.bounds();
 

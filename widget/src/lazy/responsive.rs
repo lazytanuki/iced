@@ -195,6 +195,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         let state = tree.state.downcast_mut::<State>();
         let mut content = self.content.borrow_mut();
@@ -217,6 +218,7 @@ where
                     clipboard,
                     &mut local_shell,
                     viewport,
+                    theme,
                 );
             },
         );
@@ -422,11 +424,14 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
+        theme: &Theme,
     ) {
         let mut is_layout_invalid = false;
 
         let _ = self.with_overlay_mut_maybe(|overlay| {
-            overlay.update(event, layout, cursor, renderer, clipboard, shell);
+            overlay.update(
+                event, layout, cursor, renderer, clipboard, shell, theme,
+            );
 
             is_layout_invalid = shell.is_layout_invalid();
         });

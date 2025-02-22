@@ -481,6 +481,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         let Memory { action, .. } = tree.state.downcast_mut();
         let node = self.internal.layout();
@@ -510,7 +511,7 @@ where
 
             content.update(
                 tree, event, layout, cursor, renderer, clipboard, shell,
-                viewport, is_picked,
+                viewport, is_picked, theme,
             );
         }
 

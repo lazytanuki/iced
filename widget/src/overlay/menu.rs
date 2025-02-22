@@ -269,12 +269,13 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
+        theme: &Theme,
     ) {
         let bounds = layout.bounds();
 
         self.list.update(
             self.state, event, layout, cursor, renderer, clipboard, shell,
-            &bounds,
+            &bounds, theme,
         );
     }
 
@@ -395,6 +396,7 @@ where
         _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
+        _theme: &Theme,
     ) {
         match event {
             Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {

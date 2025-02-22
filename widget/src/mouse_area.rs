@@ -225,6 +225,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         self.content.as_widget_mut().update(
             &mut tree.children[0],
@@ -235,6 +236,7 @@ where
             clipboard,
             shell,
             viewport,
+            theme,
         );
 
         if shell.is_event_captured() {

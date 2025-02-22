@@ -271,6 +271,7 @@ where
         _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
+        _theme: &Theme,
     ) {
         let state = tree.state.downcast_mut::<State>();
 

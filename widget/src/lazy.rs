@@ -205,6 +205,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         self.with_element_mut(|element| {
             element.as_widget_mut().update(
@@ -216,6 +217,7 @@ where
                 clipboard,
                 shell,
                 viewport,
+                theme,
             );
         });
     }
@@ -392,9 +394,12 @@ where
         renderer: &Renderer,
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
+        theme: &Theme,
     ) {
         let _ = self.with_overlay_mut_maybe(|overlay| {
-            overlay.update(event, layout, cursor, renderer, clipboard, shell);
+            overlay.update(
+                event, layout, cursor, renderer, clipboard, shell, theme,
+            );
         });
     }
 

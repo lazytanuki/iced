@@ -119,12 +119,13 @@ use std::sync::Arc;
 /// This is just a function version of [`Simulator::new`].
 pub fn simulator<'a, Message, Theme, Renderer>(
     element: impl Into<Element<'a, Message, Theme, Renderer>>,
+    theme: &'a Theme,
 ) -> Simulator<'a, Message, Theme, Renderer>
 where
     Theme: theme::Base,
     Renderer: core::Renderer + core::renderer::Headless,
 {
-    Simulator::new(element)
+    Simulator::new(element, theme)
 }
 
 /// A user interface that can be interacted with and inspected programmatically.
@@ -140,6 +141,7 @@ pub struct Simulator<
     size: Size,
     cursor: mouse::Cursor,
     messages: Vec<Message>,
+    theme: &'a Theme,
 }
 
 /// A specific area of a [`Simulator`], normally containing a widget.
@@ -157,16 +159,23 @@ where
     /// Creates a new [`Simulator`] with default [`Settings`] and a default size (1024x768).
     pub fn new(
         element: impl Into<Element<'a, Message, Theme, Renderer>>,
+        theme: &'a Theme,
     ) -> Self {
-        Self::with_settings(Settings::default(), element)
+        Self::with_settings(Settings::default(), element, theme)
     }
 
     /// Creates a new [`Simulator`] with the given [`Settings`] and a default size (1024x768).
     pub fn with_settings(
         settings: Settings,
         element: impl Into<Element<'a, Message, Theme, Renderer>>,
+        theme: &'a Theme,
     ) -> Self {
-        Self::with_size(settings, window::Settings::default().size, element)
+        Self::with_size(
+            settings,
+            window::Settings::default().size,
+            element,
+            theme,
+        )
     }
 
     /// Creates a new [`Simulator`] with the given [`Settings`] and size.
@@ -174,6 +183,7 @@ where
         settings: Settings,
         size: impl Into<Size>,
         element: impl Into<Element<'a, Message, Theme, Renderer>>,
+        theme: &'a Theme,
     ) -> Self {
         let size = size.into();
 
@@ -202,6 +212,7 @@ where
             size,
             cursor: mouse::Cursor::Unavailable,
             messages: Vec::new(),
+            theme,
         }
     }
 
@@ -373,14 +384,14 @@ where
         let target = self.find(selector)?;
         self.point_at(target.bounds.center());
 
-        let _ = self.simulate(click());
+        let _ = self.simulate(click(), self.theme);
 
         Ok(target)
     }
 
     /// Simulates a key press, followed by a release, in the [`Simulator`].
     pub fn tap_key(&mut self, key: impl Into<keyboard::Key>) -> event::Status {
-        self.simulate(tap_key(key, None))
+        self.simulate(tap_key(key, None), self.theme)
             .first()
             .copied()
             .unwrap_or(event::Status::Ignored)
@@ -388,7 +399,7 @@ where
 
     /// Simulates a user typing in the keyboard the given text in the [`Simulator`].
     pub fn typewrite(&mut self, text: &str) -> event::Status {
-        let statuses = self.simulate(typewrite(text));
+        let statuses = self.simulate(typewrite(text), self.theme);
 
         statuses
             .into_iter()
@@ -399,6 +410,7 @@ where
     pub fn simulate(
         &mut self,
         events: impl IntoIterator<Item = Event>,
+        theme: &Theme,
     ) -> Vec<event::Status> {
         let events: Vec<Event> = events.into_iter().collect();
 
@@ -408,14 +420,15 @@ where
             &mut self.renderer,
             &mut clipboard::Null,
             &mut self.messages,
+            theme,
         );
 
         statuses
     }
 
     /// Draws and takes a [`Snapshot`] of the interface in the [`Simulator`].
-    pub fn snapshot(&mut self, theme: &Theme) -> Result<Snapshot, Error> {
-        let base = theme.base();
+    pub fn snapshot(&mut self) -> Result<Snapshot, Error> {
+        let base = self.theme.base();
 
         let _ = self.raw.update(
             &[Event::Window(window::Event::RedrawRequested(
@@ -425,11 +438,12 @@ where
             &mut self.renderer,
             &mut clipboard::Null,
             &mut self.messages,
+            self.theme,
         );
 
         let _ = self.raw.draw(
             &mut self.renderer,
-            theme,
+            self.theme,
             &core::renderer::Style {
                 text_color: base.text_color,
             },

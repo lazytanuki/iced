@@ -382,6 +382,7 @@ where
         _clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         _viewport: &Rectangle,
+        _theme: &Theme,
     ) {
         let Some(on_link_clicked) = &self.on_link_click else {
             return;

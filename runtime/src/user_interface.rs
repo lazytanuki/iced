@@ -184,6 +184,7 @@ where
         renderer: &mut Renderer,
         clipboard: &mut dyn Clipboard,
         messages: &mut Vec<Message>,
+        theme: &Theme,
     ) -> (State, Vec<event::Status>) {
         use std::mem::ManuallyDrop;
 
@@ -220,6 +221,7 @@ where
                     renderer,
                     clipboard,
                     &mut shell,
+                    theme,
                 );
 
                 event_statuses.push(shell.event_status());
@@ -311,6 +313,7 @@ where
                     clipboard,
                     &mut shell,
                     &viewport,
+                    theme,
                 );
 
                 if shell.event_status() == event::Status::Captured {

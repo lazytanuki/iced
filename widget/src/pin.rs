@@ -184,6 +184,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         self.content.as_widget_mut().update(
             tree,
@@ -194,6 +195,7 @@ where
             clipboard,
             shell,
             viewport,
+            theme,
         );
     }
 

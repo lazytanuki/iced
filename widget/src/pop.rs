@@ -144,6 +144,7 @@ where
         clipboard: &mut dyn Clipboard,
         shell: &mut Shell<'_, Message>,
         viewport: &Rectangle,
+        theme: &Theme,
     ) {
         if let Event::Window(window::Event::RedrawRequested(now)) = &event {
             let state = tree.state.downcast_mut::<State>();
@@ -215,6 +216,7 @@ where
             clipboard,
             shell,
             viewport,
+            theme,
         );
     }
 
